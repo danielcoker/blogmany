@@ -38,7 +38,7 @@ def create_post(request):
 @api_view(['GET'])
 def get_post(request, pk=None):
     post = _get_post(pk=pk)
-    serializer = PostSerializer(instance=post)
+    serializer = PostSerializer(post)
 
     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -46,6 +46,11 @@ def get_post(request, pk=None):
 @api_view(['PUT'])
 def update_post(request, pk=None):
     post = _get_post(pk=pk)
+
+    serializer = PostSerializer(post, data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
     tags = []
 
     for tag_id in request.data.get('tags'):
@@ -56,7 +61,5 @@ def update_post(request, pk=None):
             raise NotFound()
 
     post.tags.set(tags)
-
-    serializer = PostSerializer(instance=post)
 
     return Response(data=serializer.data, status=status.HTTP_200_OK)
