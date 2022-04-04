@@ -57,7 +57,7 @@ def update_post(request, pk=None):
         try:
             tag = Tag.objects.get(id=tag_id)
             tags.append(tag)
-        except:
+        except Tag.DoesNotExist:
             raise NotFound()
 
     post.tags.set(tags)
